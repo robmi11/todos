@@ -1,0 +1,1 @@
+# Fullstack application for tracking and managing everyday tasks.
