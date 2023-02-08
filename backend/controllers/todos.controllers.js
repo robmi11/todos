@@ -1,9 +1,10 @@
 import TODOS from "../models/todos.models.js";
 import asyncHandler from "express-async-handler";
-import mongoose from "mongoose";
 
 /**
- * getAllTodos
+ * @description   GET User Todos
+ * @route         GET /api/v1/todos
+ * @access        Private
  */
 
 export const getAllTodos = asyncHandler(async (req, res) => {
@@ -12,7 +13,9 @@ export const getAllTodos = asyncHandler(async (req, res) => {
 });
 
 /**
- * create new todos
+ * @description   Create Todo
+ * @route         POST /api/v1/todos
+ * @access        Private
  */
 export const setTodo = asyncHandler(async (req, res) => {
   const { name } = req.body;
@@ -33,7 +36,9 @@ export const setTodo = asyncHandler(async (req, res) => {
 });
 
 /**
- * Update todo
+ * @description   Update User todo
+ * @route         PUT /api/v1/todos/:id
+ * @access        Private
  */
 
 export const updateTodo = asyncHandler(async (req, res) => {
@@ -67,7 +72,9 @@ export const updateTodo = asyncHandler(async (req, res) => {
 });
 
 /**
- * deleteTodo
+ * @description   Delete user todo
+ * @route         DELETE /api/v1/todos/:id
+ * @access        Private
  */
 export const deleteTodo = asyncHandler(async (req, res) => {
   const { id } = req.params;
