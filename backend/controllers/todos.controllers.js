@@ -1,4 +1,4 @@
-import TODOS from "../models/todos.models.js";
+import TODOS from "../models/todo.models.js";
 import asyncHandler from "express-async-handler";
 
 /**
@@ -6,9 +6,8 @@ import asyncHandler from "express-async-handler";
  * @route         GET /api/v1/todos
  * @access        Private
  */
-
 export const getAllTodos = asyncHandler(async (req, res) => {
-  const todos = await TODOS.find();
+  const todos = await TODOS.find({ user: req.user.id });
   res.status(200).json(todos);
 });
 
@@ -25,7 +24,7 @@ export const setTodo = asyncHandler(async (req, res) => {
     throw new Error("Proszę podać opis");
   }
 
-  const newTodo = await TODOS.create({ name });
+  const newTodo = await TODOS.create({ name, user: req.user.id });
 
   if (!newTodo) {
     res.status(500);
@@ -43,25 +42,28 @@ export const setTodo = asyncHandler(async (req, res) => {
 
 export const updateTodo = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
-  console.log(id);
-  if (!name) {
-    res.status(400);
-    throw new Error("Proszę podać nową wartość dla zadania.");
-  }
+  let name = req.body.name;
+  let done = req.body.done;
 
-  if (!id) {
+  if (!id || !(await TODOS.findById(id))) {
     res.status(400);
     throw new Error("Nie przekazano id");
   }
 
-  const todo = await TODOS.findById(id);
-  if (!todo) {
-    res.status(404);
-    throw new Error(`Zadanie o id ${id} nie zostało znalezione.`);
+  if (!name) {
+    name = await TODOS.findById(id).name;
   }
 
-  const updTodo = await TODOS.findByIdAndUpdate(id, { name }, { new: true });
+  if (!done) {
+    done = await TODOS.findById(id).done;
+  }
+
+  const upd = {
+    name,
+    done,
+  };
+
+  const updTodo = await TODOS.findByIdAndUpdate(id, upd, { new: true });
 
   if (!updTodo) {
     res.status(500);
@@ -84,11 +86,13 @@ export const deleteTodo = asyncHandler(async (req, res) => {
     throw new Error("Proszę podać id.");
   }
 
-  const deletedTodo = await TODOS.findByIdAndDelete(id);
-  if (!deletedTodo) {
-    res.status(500);
-    throw new Error("Błąd servera");
+  const todo = await TODOS.findById(id);
+  if (!todo) {
+    res.status(404);
+    throw new Error("Nie znaleziono zadania.");
   }
+
+  await todo.remove();
 
   res.status(200).json({ message: `Zadanie numer ${id} zostało usunięte.` });
 });

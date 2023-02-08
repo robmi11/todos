@@ -1,7 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import db from "./db/db.js";
-import router from "./routes/todos.routes.js";
+import todosRouter from "./routes/todos.routes.js";
+import userRouter from "./routes/users.routes.js";
 import { customErrorHandler } from "./middlewares/error.middleware.js";
 dotenv.config();
 
@@ -17,7 +18,8 @@ const server = express();
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 
-server.use("/api/v1/todos", router);
+server.use("/api/v1/todos", todosRouter);
+server.use("/api/v1/users", userRouter);
 
 server.use(customErrorHandler);
 server.listen(PORT, function () {

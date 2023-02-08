@@ -1,4 +1,5 @@
 import express from "express";
+import protect from "../middlewares/protect.middleware.js";
 const router = express.Router();
 
 import {
@@ -8,7 +9,7 @@ import {
   deleteTodo,
 } from "../controllers/todos.controllers.js";
 
-router.route("/").get(getAllTodos).post(setTodo);
-router.route("/:id").delete(deleteTodo).put(updateTodo);
+router.route("/").get(protect, getAllTodos).post(protect, setTodo);
+router.route("/:id").delete(protect, deleteTodo).put(protect, updateTodo);
 
 export default router;
