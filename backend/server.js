@@ -15,13 +15,17 @@ const PORT = process.env.PORT || 8000;
 //Initialize express server
 const server = express();
 
+//Set server to accept json and url
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 
+//Routes
 server.use("/api/v1/todos", todosRouter);
 server.use("/api/v1/users", userRouter);
 
+//Error handler
 server.use(customErrorHandler);
+
 server.listen(PORT, function () {
   console.log(`Server is on. Port: ${PORT}`);
 });
