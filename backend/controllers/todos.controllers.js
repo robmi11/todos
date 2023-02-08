@@ -8,6 +8,10 @@ import asyncHandler from "express-async-handler";
  */
 export const getAllTodos = asyncHandler(async (req, res) => {
   const todos = await TODOS.find({ user: req.user.id });
+  if (!todos) {
+    res.status(404);
+    throw new Error("Nie znaleziono.");
+  }
   res.status(200).json(todos);
 });
 

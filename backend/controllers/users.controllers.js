@@ -37,7 +37,11 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Nie zarejestrowano użytkownika");
   }
 
-  res.status(201).json(newUser);
+  res.status(201).json({
+    name: newUser.name,
+    email: newUser.email,
+    token: jwt.sign({ id: newUser._id }, "robert123456", { expiresIn: "1d" }),
+  });
 });
 
 /**
