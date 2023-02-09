@@ -40,7 +40,9 @@ export const registerUser = asyncHandler(async (req, res) => {
   res.status(201).json({
     name: newUser.name,
     email: newUser.email,
-    token: jwt.sign({ id: newUser._id }, "robert123456", { expiresIn: "1d" }),
+    token: jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    }),
   });
 });
 
@@ -65,10 +67,12 @@ export const userLogin = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: jwt.sign({ id: user._id }, "robert123456", { expiresIn: "1d" }),
+      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      }),
     });
   } else {
-    res.status(400);
-    throw new Error("Błąd logowania");
+    res.status(401);
+    throw new Error("Brak autoryzacji");
   }
 });

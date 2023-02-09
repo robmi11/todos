@@ -1,4 +1,5 @@
 import TODOS from "../models/todo.models.js";
+import USER from "../models/user.models.js";
 import asyncHandler from "express-async-handler";
 
 /**
@@ -45,21 +46,33 @@ export const setTodo = asyncHandler(async (req, res) => {
  */
 
 export const updateTodo = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
   let name = req.body.name;
   let done = req.body.done;
 
-  if (!id || !(await TODOS.findById(id))) {
+  if (!id) {
     res.status(400);
     throw new Error("Nie przekazano id");
   }
 
-  if (!name) {
-    name = await TODOS.findById(id).name;
+  //Check if todo exists
+  const todo = await TODOS.findById(id);
+  if (!todo) {
+    res.status(404);
+    throw new Error(`Nie znaleziono zadania o id ${id}.`);
   }
 
-  if (!done) {
-    done = await TODOS.findById(id).done;
+  //Check for logged user
+  const user = await USER.findById(req.user.id);
+  if (!user) {
+    res.status(401);
+    throw new Error("Nie znaleziono użytkownika");
+  }
+
+  //Check if user is owner of todo
+  if (todo.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error("Użytkownik nie jest uprawniony do edycji zadania.");
   }
 
   const upd = {
@@ -83,17 +96,28 @@ export const updateTodo = asyncHandler(async (req, res) => {
  * @access        Private
  */
 export const deleteTodo = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
 
   if (!id) {
     res.status(400);
     throw new Error("Proszę podać id.");
   }
 
+  const user = await USER.findById(req.user.id);
+  if (!user) {
+    res.status(401);
+    throw new Error("Użytkownik nie uprawniony do usunięcia zadania");
+  }
+
   const todo = await TODOS.findById(id);
   if (!todo) {
     res.status(404);
     throw new Error("Nie znaleziono zadania.");
+  }
+
+  if (todo.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error("Brak autoryzacji");
   }
 
   await todo.remove();
