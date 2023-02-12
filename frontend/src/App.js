@@ -1,24 +1,15 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 function App() {
   return (
-    <div className="container">
-      <nav className="bg-blue-100 flex justify-end items-center h-20">
-        <div className="flex justify-between w-fit">
-          <Link className="px-10" to="dashboard">
-            Panel klienta
-          </Link>
-          <Link className="px-10" to="login">
-            Logowanie
-          </Link>
-          <Link className="px-10" to="register">
-            Rejestracja
-          </Link>
-        </div>
-      </nav>
-      <h1 className="text-3xl font-bold text-center">Witaj</h1>
-      <section className="mx-auto">
+    <div className="min-h-screen grid grid-rows-[80px_1fr_220px]">
+      <Header />
+      <section className="mt-5 self-start h-full">
+        <h1 className="text-3xl font-bold text-center">Witaj, Robert</h1>
         <Outlet />
       </section>
+      <Footer />
     </div>
   );
 }

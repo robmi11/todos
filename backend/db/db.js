@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-const uri =
-  "mongodb+srv://todos_user:dKOSFLKCq5sveyf9@todos.xsf0wrx.mongodb.net/todos?retryWrites=true&w=majority";
+const uri = process.env.MONGO_URI;
 
 const db = async () => {
   try {
